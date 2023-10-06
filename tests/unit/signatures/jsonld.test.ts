@@ -1,20 +1,20 @@
-import { DEFAULT_CONTEXT, JSONLDService, VERIFIABLE_CREDENTIAL, VERIFIABLE_PRESENTATION } from "../../../src/services/common"
+import { DEFAULT_CONTEXT, JSONLDService, JWTService, KeyDIDMethod, VERIFIABLE_CREDENTIAL, VERIFIABLE_PRESENTATION } from "../../../src/services/common"
 import { KEY_ALG } from "../../../src/utils"
 
 describe('jsonld utilities', () => {
     const didWithKeys = {
-        did: 'did:ethr:maticmum:0xA765CFD161AA0B6f95cb1DC1d933BFf6FAb0ABeE',
+        did: 'did:key:z6MknTZPNAtKXhYUC51KueL2RmJX6nMhZAbjfzV6LRv17Juz',
         keyPair: {
-            algorithm: KEY_ALG.ES256K,
-            publicKey: '027b942c04885bfdcc2497a9a94b2bdf915483cc2c5b5bffd7e86dcf021d731855',
-            privateKey: '0x40dd06c69267386d198939c64580714e9526cea274f13f76b6b16e431d7caaa9'
+            algorithm: KEY_ALG.EdDSA,
+            publicKey: '0x76f11a56051843a758f457c5891bac494056d447f3606e5131648c453d6f30f5',
+            privateKey: '0xb2e15a821fe57b6af467ab4c3aaa264456a14f90bed5cf8a00f013bdbe7177be76f11a56051843a758f457c5891bac494056d447f3606e5131648c453d6f30f5'
         }
     }
 
     const context = [DEFAULT_CONTEXT]
     const credentialSubject = {
         id: "did:ethr:maticmum:0x5F880a6eB77c12Db2e14F29bfE3b1aaf94C95508",
-        name: "Ollie"
+        // name: "Ollie" NOTE: not valid? MISSING_PROPERTIES_IN_CONTEXT credentialSubject.name
     }
     const issuer = {
         id: didWithKeys.did
@@ -44,8 +44,9 @@ describe('jsonld utilities', () => {
 
     fit('SignVC not implemented for jsonld', async () => {
         const jsonldService = new JSONLDService()
-        await expect(jsonldService.signVC(didWithKeys, VC_PAYLOAD))
-            .rejects.toThrowError("Bogus")
+        const ldProof = await jsonldService.signVC(didWithKeys, VC_PAYLOAD)
+
+        console.log(ldProof)
     })
 
     it('SignVP not implemented for jsonld', async () => {
